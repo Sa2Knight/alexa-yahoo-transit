@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/Sa2Knight/alexa-yahoo-transit#readme",
   "dependencies": {
-    "alexa-sdk": "^1.0.24"
+    "alexa-sdk": "^1.0.24",
+    "selenium-webdriver": "^3.6.0"
   }
 }
