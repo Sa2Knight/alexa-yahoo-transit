@@ -11,8 +11,8 @@ exports.fetchTransitInfo = (stationFrom, stationTo) => {
       const transport = $routeDetail.find('.transport')
                         .text()
                         .split(/\r\n|\r|\n/)
-                        .filter((line) => line.indexOf('[train]') >= 0)[0]
-                        .split('[train]')[1];
+                        .filter((line) => line.indexOf('[train]') >= 0 || line.indexOf('[bus]') >= 0)[0]
+                        .split(/\[.+\]/)[1];
       const startTime = $routeDetail.find('.time li').first().text()
       const arrivalTime = $routeDetail.find('.time li').last().text()
       return {
