@@ -1,0 +1,22 @@
+{
+  "name": "alexa-yahoo-transit",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Sa2Knight/alexa-yahoo-transit.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Sa2Knight/alexa-yahoo-transit/issues"
+  },
+  "homepage": "https://github.com/Sa2Knight/alexa-yahoo-transit#readme",
+  "dependencies": {
+    "alexa-sdk": "^1.0.24"
+  }
+}
