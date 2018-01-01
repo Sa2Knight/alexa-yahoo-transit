@@ -18,7 +18,7 @@ const makeTransitMessage = (stationFrom, stationTo, transitInfo) => {
     ${transitInfo.startTime}に${stationFrom}に到着する、
     ${transitInfo.transport}に乗車すると、${transitInfo.arrivalTime}に
     ${stationTo}に到着します。
-    運賃は${transitInfo.fare}で、${transitInfo.transfer}回の乗り換えがあります。
+    料金は${transitInfo.fare}で、${transitInfo.transfer}回の乗り換えがあります。
   `
   return msg.replace('行に', '行きに')
             .replace('0回の乗り換えがあります。', '乗り換えはありません。')
@@ -46,29 +46,29 @@ const emitAdjacentTransitInfo = function(orientation = 'next') {
  * 初回のハンドラ
  */
 const firstHandlers = {
-    'LaunchRequest': function () {
-      const launchMessage = `
-        Yahoo路線を使ってルート案内します。東京駅から渋谷駅まで。のように、
-        出発駅と到着駅を教えて下さい。
-      `
-      this.emit(':ask', launchMessage)
-    },
-    'Transit': function () {
-      const stationFrom = this.event.request.intent.slots.StationFrom.value
-      const stationTo   = this.event.request.intent.slots.StationTo.value
-      transit.fetchTransitInfo(stationFrom, stationTo).then((result) => {
-        const transitMessage = makeTransitMessage(stationFrom, stationTo, result)
-        this.attributes['stationFrom']    = stationFrom
-        this.attributes['stationTo']      = stationTo
-        this.attributes['transitMessage'] = transitMessage
-        this.attributes['currentUrl']     = result.url
-        this.handler.state = 'SECOND';
-        this.emit(':ask', transitMessage)
-      })
-    },
-    'AMAZON.HelpIntent': function () {},
-    'AMAZON.CancelIntent': function () {},
-    'AMAZON.StopIntent': function () {}
+  'LaunchRequest': function () {
+    const launchMessage = `
+      Yahoo路線を使ってルート案内します。東京駅から渋谷駅まで。のように、
+      出発駅と到着駅を教えて下さい。
+    `
+    this.emit(':ask', launchMessage)
+  },
+  'Transit': function () {
+    const stationFrom = this.event.request.intent.slots.StationFrom.value
+    const stationTo   = this.event.request.intent.slots.StationTo.value
+    transit.fetchTransitInfo(stationFrom, stationTo).then((result) => {
+      const transitMessage = makeTransitMessage(stationFrom, stationTo, result)
+      this.attributes['stationFrom']    = stationFrom
+      this.attributes['stationTo']      = stationTo
+      this.attributes['transitMessage'] = transitMessage
+      this.attributes['currentUrl']     = result.url
+      this.handler.state = 'SECOND';
+      this.emit(':ask', transitMessage)
+    })
+  },
+  'AMAZON.HelpIntent': function () {},
+  'AMAZON.CancelIntent': function () {},
+  'AMAZON.StopIntent': function () {}
 };
 
 /**
