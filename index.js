@@ -7,6 +7,12 @@ exports.handler = function(event, context, callback) {
   alexa.execute();
 };
 
+/**
+ * 路線情報に関するメッセージを生成する
+ * @param [String] stationFrom 出発地
+ * @param [String] stationTo   到着地
+ * @param [Object] transitInfo 路線情報オブジェクト
+ */
 const makeTransitMessage = (stationFrom, stationTo, transitInfo) => {
   const msg = `
     ${transitInfo.startTime}に${stationFrom}に到着する、
@@ -47,9 +53,13 @@ const firstHandlers = {
  * 初回以降のハンドラ
  */
 const secondHandlers = Alexa.CreateStateHandler('SECOND', {
+
+  // 保持している路線情報をリピート
   'Repeat': function() {
     this.emit(':ask', this.attributes['transitMessage'])
   },
+
+  // １本後の路線情報を発話
   'Next': function() {
     transit.fetchAdjacentTransitInfo(this.attributes['currentUrl'], 'next').then((result) => {
       const transitMessage = makeTransitMessage(
@@ -62,6 +72,8 @@ const secondHandlers = Alexa.CreateStateHandler('SECOND', {
       this.emit(':ask', transitMessage)
     })
   },
+
+  // セッション終了
   'Complete': function() {
     this.emit(':tell', 'いってらっしゃいませ')
   },
