@@ -11,9 +11,11 @@ const transitMessage = (stationFrom, stationTo, transitInfo) => {
   const msg = `
     ${transitInfo.startTime}に${stationFrom}に到着する、
     ${transitInfo.transport}に乗車すると、${transitInfo.arrivalTime}に
-    ${stationTo}に到着します
+    ${stationTo}に到着します。
+    運賃は${transitInfo.fare}で、${transitInfo.transfer}回の乗り換えがあります。
   `
   return msg.replace('行に', 'ゆきに')
+            .replace('0回の乗り換えがあります。', '乗り換えはありません。')
 }
 
 const handlers = {
