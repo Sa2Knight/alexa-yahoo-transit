@@ -48,7 +48,7 @@ const emitAdjacentTransitInfo = function(orientation = 'next') {
 const firstHandlers = {
     'LaunchRequest': function () {
       const launchMessage = `
-        Yahoo路線を使って乗車案内します。東京駅から渋谷駅まで。のように、
+        Yahoo路線を使ってルート案内します。東京駅から渋谷駅まで。のように、
         出発駅と到着駅を教えて下さい。
       `
       this.emit(':ask', launchMessage)
@@ -77,7 +77,7 @@ const firstHandlers = {
 const secondHandlers = Alexa.CreateStateHandler('SECOND', {
 
   // 保持している路線情報をリピート
-  'Repeat': function() {
+  'AMAZON.RepeatIntent': function() {
     this.emit(':ask', this.attributes['transitMessage'])
   },
 
