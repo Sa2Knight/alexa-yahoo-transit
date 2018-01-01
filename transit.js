@@ -8,6 +8,8 @@ exports.fetchTransitInfo = (stationFrom, stationTo) => {
     })
     .then((result) => {
       const $routeDetail = result.$('.routeDetail').first()
+      const distance     = result.$('.distance').first().text()
+      const fare         = result.$('.fare').first().text()
       const transport = $routeDetail.find('.transport')
                         .text()
                         .split(/\r\n|\r|\n/)
@@ -16,6 +18,8 @@ exports.fetchTransitInfo = (stationFrom, stationTo) => {
       const startTime = $routeDetail.find('.time li').first().text()
       const arrivalTime = $routeDetail.find('.time li').last().text()
       return {
+        distance,
+        fare,
         startTime,
         arrivalTime,
         transport
