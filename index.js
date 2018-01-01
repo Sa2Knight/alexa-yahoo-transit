@@ -3,11 +3,11 @@ const transit = require('./transit.js')
 
 exports.handler = function(event, context, callback) {
   const alexa = Alexa.handler(event, context);
-  alexa.registerHandlers(handlers);
+  alexa.registerHandlers(firstHandlers, secondHandlers);
   alexa.execute();
 };
 
-const transitMessage = (stationFrom, stationTo, transitInfo) => {
+const makeTransitMessage = (stationFrom, stationTo, transitInfo) => {
   const msg = `
     ${transitInfo.startTime}に${stationFrom}に到着する、
     ${transitInfo.transport}に乗車すると、${transitInfo.arrivalTime}に
@@ -18,7 +18,10 @@ const transitMessage = (stationFrom, stationTo, transitInfo) => {
             .replace('0回の乗り換えがあります。', '乗り換えはありません。')
 }
 
-const handlers = {
+/**
+ * 初回のハンドラ
+ */
+const firstHandlers = {
     'LaunchRequest': function () {
       this.emit('Transit');
     },
@@ -26,10 +29,25 @@ const handlers = {
       const stationFrom = this.event.request.intent.slots.StationFrom.value
       const stationTo   = this.event.request.intent.slots.StationTo.value
       transit.fetchTransitInfo(stationFrom, stationTo).then((result) => {
-        this.emit(':tell', transitMessage(stationFrom, stationTo, result))
+        const transitMessage = makeTransitMessage(stationFrom, stationTo, result)
+        this.attributes['transitMessage'] = transitMessage
+        this.handler.state = 'SECOND';
+        this.emit(':ask', transitMessage)
       })
     },
     'AMAZON.HelpIntent': function () {},
     'AMAZON.CancelIntent': function () {},
     'AMAZON.StopIntent': function () {}
 };
+
+/**
+ * 初回以降のハンドラ
+ */
+const secondHandlers = Alexa.CreateStateHandler('SECOND', {
+  'Repeat': function() {
+    this.emit(':ask', this.attributes['transitMessage'])
+  },
+  'Complete': function() {
+    this.emit(':tell', 'いってらっしゃい')
+  },
+})
