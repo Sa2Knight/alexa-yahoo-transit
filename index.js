@@ -73,6 +73,20 @@ const secondHandlers = Alexa.CreateStateHandler('SECOND', {
     })
   },
 
+  // １本前の路線情報を発話
+  'Prev': function() {
+    transit.fetchAdjacentTransitInfo(this.attributes['currentUrl'], 'prev').then((result) => {
+      const transitMessage = makeTransitMessage(
+        this.attributes['stationFrom'],
+        this.attributes['stationTo'],
+        result
+      )
+      this.attributes['transitMessage'] = transitMessage
+      this.attributes['currentUrl'] = result.url
+      this.emit(':ask', transitMessage)
+    })
+  },
+
   // セッション終了
   'Complete': function() {
     this.emit(':tell', 'いってらっしゃいませ')
