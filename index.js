@@ -46,6 +46,9 @@ const emitAdjacentTransitInfo = function(orientation = 'next') {
  * 初回のハンドラ
  */
 const firstHandlers = {
+  /**
+   * 他のインテントに合致しない場合に、スキルの説明をする
+   */
   'LaunchRequest': function () {
     const launchMessage = `
       Yahoo路線を使ってルート案内します。東京駅から渋谷駅まで。のように、
@@ -53,6 +56,9 @@ const firstHandlers = {
     `
     this.emit(':ask', launchMessage)
   },
+  /**
+   * 発着駅を指定した場合に、路線情報を発話する
+   */
   'Transit': function () {
     const stationFrom = this.event.request.intent.slots.StationFrom.value
     const stationTo   = this.event.request.intent.slots.StationTo.value
@@ -66,9 +72,6 @@ const firstHandlers = {
       this.emit(':ask', transitMessage)
     })
   },
-  'AMAZON.HelpIntent': function () {},
-  'AMAZON.CancelIntent': function () {},
-  'AMAZON.StopIntent': function () {}
 };
 
 /**
