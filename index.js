@@ -25,6 +25,24 @@ const makeTransitMessage = (stationFrom, stationTo, transitInfo) => {
 }
 
 /**
+ * １本前または１本後の路線情報を発話する
+ * この関数はthisを束縛しないのでcall/applyで呼び出すこと
+ * @param [String] orientation １本後の場合next,１本前の場合prevを指定
+ */
+const emitAdjacentTransitInfo = function(orientation = 'next') {
+  transit.fetchAdjacentTransitInfo(this.attributes['currentUrl'], orientation).then((result) => {
+    const transitMessage = makeTransitMessage(
+      this.attributes['stationFrom'],
+      this.attributes['stationTo'],
+      result
+    )
+    this.attributes['transitMessage'] = transitMessage
+    this.attributes['currentUrl'] = result.url
+    this.emit(':ask', transitMessage)
+  })
+}
+
+/**
  * 初回のハンドラ
  */
 const firstHandlers = {
@@ -61,30 +79,12 @@ const secondHandlers = Alexa.CreateStateHandler('SECOND', {
 
   // １本後の路線情報を発話
   'Next': function() {
-    transit.fetchAdjacentTransitInfo(this.attributes['currentUrl'], 'next').then((result) => {
-      const transitMessage = makeTransitMessage(
-        this.attributes['stationFrom'],
-        this.attributes['stationTo'],
-        result
-      )
-      this.attributes['transitMessage'] = transitMessage
-      this.attributes['currentUrl'] = result.url
-      this.emit(':ask', transitMessage)
-    })
+    emitAdjacentTransitInfo.call(this, 'next')
   },
 
   // １本前の路線情報を発話
   'Prev': function() {
-    transit.fetchAdjacentTransitInfo(this.attributes['currentUrl'], 'prev').then((result) => {
-      const transitMessage = makeTransitMessage(
-        this.attributes['stationFrom'],
-        this.attributes['stationTo'],
-        result
-      )
-      this.attributes['transitMessage'] = transitMessage
-      this.attributes['currentUrl'] = result.url
-      this.emit(':ask', transitMessage)
-    })
+    emitAdjacentTransitInfo.call(this, 'prev')
   },
 
   // セッション終了
