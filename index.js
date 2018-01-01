@@ -47,7 +47,11 @@ const emitAdjacentTransitInfo = function(orientation = 'next') {
  */
 const firstHandlers = {
     'LaunchRequest': function () {
-      this.emit('Transit');
+      const launchMessage = `
+        Yahoo路線を使って乗車案内します。東京駅から渋谷駅まで。のように、
+        出発駅と到着駅を教えて下さい。
+      `
+      this.emit(':ask', launchMessage)
     },
     'Transit': function () {
       const stationFrom = this.event.request.intent.slots.StationFrom.value
