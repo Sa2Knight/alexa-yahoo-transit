@@ -57,6 +57,12 @@ const firstHandlers = {
     this.emit(':ask', launchMessage)
   },
   /**
+   * セッション終了
+   */
+  'Complete': function() {
+    this.emit(':tell', 'スキルを終了します。')
+  },
+  /**
    * 発着駅を指定した場合に、路線情報を発話する
    */
   'Transit': function () {
@@ -78,23 +84,38 @@ const firstHandlers = {
  * 初回以降のハンドラ
  */
 const secondHandlers = Alexa.CreateStateHandler('SECOND', {
+  /**
+   * 他のインテントに合致しない場合に聞き返す
+   */
+  'LaunchRequest': function () {
+    const launchMessage = `え？？`
+    this.emit(':ask', launchMessage)
+  },
 
-  // 保持している路線情報をリピート
+  /**
+   * 保持している路線情報をリピート
+   */
   'AMAZON.RepeatIntent': function() {
     this.emit(':ask', this.attributes['transitMessage'])
   },
 
-  // １本後の路線情報を発話
+  /**
+   * １本後の路線情報を発話
+   */
   'Next': function() {
     emitAdjacentTransitInfo.call(this, 'next')
   },
 
-  // １本前の路線情報を発話
+  /**
+   * １本前の路線情報を発話
+   */
   'Prev': function() {
     emitAdjacentTransitInfo.call(this, 'prev')
   },
 
-  // セッション終了
+  /**
+   * セッション終了
+   */
   'Complete': function() {
     this.emit(':tell', 'いってらっしゃいませ')
   },
