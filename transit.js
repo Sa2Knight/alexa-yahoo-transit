@@ -1,15 +1,31 @@
 const client = require('cheerio-httpcli')
+const BASE_URL = 'https://transit.yahoo.co.jp'
 
 /**
  * 始発駅と到着駅を指定すると、
  * 現在駅から直近のルートに関する情報をYahoo路線から収集する
  */
 exports.fetchTransitInfo = (stationFrom, stationTo) => {
-  return client.fetch('https://transit.yahoo.co.jp/')
+  return client.fetch(BASE_URL)
     .then((result) => {
       result.$('#sfrom').val(stationFrom)
       result.$('#sto').val(stationTo)
       return result.$('#searchModuleSubmit').click()
+    })
+    .then((result) => {
+      return parseTransitInfo(result)
+    })
+}
+
+/**
+ * Yahoo路線ページのURLを指定すると
+ * そのページの１本後の路線に関する情報を収集する
+ */
+exports.fetchNextTransitInfo = (currentUrl) => {
+  return client.fetch(currentUrl)
+    .then((result) => {
+      const nextUrl = result.$('.next a').first().attr('href')
+      return client.fetch(BASE_URL + nextUrl)
     })
     .then((result) => {
       return parseTransitInfo(result)
