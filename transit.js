@@ -19,12 +19,14 @@ exports.fetchTransitInfo = (stationFrom, stationTo) => {
 
 /**
  * Yahoo路線ページのURLを指定すると
- * そのページの１本後の路線に関する情報を収集する
+ * そのページの前後どちらかの路線に関する情報を収集する
+ * @param [String] currentUrl 元となるYahoo路線のページURL
+ * @param [String] operation  次の電車の場合next,前の電車の場合prevを指定
  */
-exports.fetchNextTransitInfo = (currentUrl) => {
+exports.fetchAdjacentTransitInfo = (currentUrl, orientation = 'next') => {
   return client.fetch(currentUrl)
     .then((result) => {
-      const nextUrl = result.$('.next a').first().attr('href')
+      const nextUrl = result.$(`.${orientation} a`).first().attr('href')
       return client.fetch(BASE_URL + nextUrl)
     })
     .then((result) => {

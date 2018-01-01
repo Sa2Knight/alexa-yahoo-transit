@@ -14,7 +14,7 @@ const makeTransitMessage = (stationFrom, stationTo, transitInfo) => {
     ${stationTo}に到着します。
     運賃は${transitInfo.fare}で、${transitInfo.transfer}回の乗り換えがあります。
   `
-  return msg.replace('行に', 'ゆきに')
+  return msg.replace('行に', '行きに')
             .replace('0回の乗り換えがあります。', '乗り換えはありません。')
 }
 
@@ -51,7 +51,7 @@ const secondHandlers = Alexa.CreateStateHandler('SECOND', {
     this.emit(':ask', this.attributes['transitMessage'])
   },
   'Next': function() {
-    transit.fetchNextTransitInfo(this.attributes['currentUrl']).then((result) => {
+    transit.fetchAdjacentTransitInfo(this.attributes['currentUrl'], 'next').then((result) => {
       const transitMessage = makeTransitMessage(
         this.attributes['stationFrom'],
         this.attributes['stationTo'],
@@ -63,6 +63,6 @@ const secondHandlers = Alexa.CreateStateHandler('SECOND', {
     })
   },
   'Complete': function() {
-    this.emit(':tell', 'いってらっしゃい')
+    this.emit(':tell', 'いってらっしゃいませ')
   },
 })
