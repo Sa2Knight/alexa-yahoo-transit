@@ -30,7 +30,10 @@ const firstHandlers = {
       const stationTo   = this.event.request.intent.slots.StationTo.value
       transit.fetchTransitInfo(stationFrom, stationTo).then((result) => {
         const transitMessage = makeTransitMessage(stationFrom, stationTo, result)
+        this.attributes['stationFrom']    = stationFrom
+        this.attributes['stationTo']      = stationTo
         this.attributes['transitMessage'] = transitMessage
+        this.attributes['currentUrl']     = result.url
         this.handler.state = 'SECOND';
         this.emit(':ask', transitMessage)
       })
@@ -46,6 +49,18 @@ const firstHandlers = {
 const secondHandlers = Alexa.CreateStateHandler('SECOND', {
   'Repeat': function() {
     this.emit(':ask', this.attributes['transitMessage'])
+  },
+  'Next': function() {
+    transit.fetchNextTransitInfo(this.attributes['currentUrl']).then((result) => {
+      const transitMessage = makeTransitMessage(
+        this.attributes['stationFrom'],
+        this.attributes['stationTo'],
+        result
+      )
+      this.attributes['transitMessage'] = transitMessage
+      this.attributes['currentUrl'] = result.url
+      this.emit(':ask', transitMessage)
+    })
   },
   'Complete': function() {
     this.emit(':tell', 'いってらっしゃい')
